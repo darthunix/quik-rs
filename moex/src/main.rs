@@ -1,4 +1,5 @@
 use anyhow::Result;
+use core::RequestCode;
 use clap::Parser;
 use fastwebsockets::{
     handshake::{self, generate_key},
@@ -54,8 +55,8 @@ fn tls_config() -> Result<Arc<ClientConfig>> {
 
 fn open_msg(login: &str, password: &str) -> String {
     format!(
-        r#"{{"msgid":10000,"login":"{}","password":"{}"}}"#,
-        login, password
+        r#"{{"msgid":{:?},"login":"{}","password":"{}"}}"#,
+        RequestCode::Auth, login, password
     )
 }
 
