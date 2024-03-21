@@ -1,5 +1,5 @@
 use anyhow::Result;
-use core::RequestCode;
+use core::auth_msg;
 use clap::Parser;
 use fastwebsockets::{
     handshake::{self, generate_key},
@@ -53,13 +53,6 @@ fn tls_config() -> Result<Arc<ClientConfig>> {
     Ok(Arc::new(config))
 }
 
-fn open_msg(login: &str, password: &str) -> String {
-    format!(
-        r#"{{"msgid":{:?},"login":"{}","password":"{}"}}"#,
-        RequestCode::Auth as u16, login, password
-    )
-}
-
 async fn connect(host: String, port: u16, uri: String) -> Result<WebSocket<TokioIo<Upgraded>>> {
     let sock = TcpStream::connect(&format!("{host}:{port}")).await?;
     let request = Request::builder()
@@ -99,7 +92,7 @@ async fn main() -> Result<()> {
     let ws = connect(args.host, args.port, args.uri).await?;
     let mut fc = FragmentCollector::new(ws);
 
-    let open_msg = open_msg(&args.login, &args.password);
+    let open_msg = auth_msg(&args.login, &args.password);
     let payload = Payload::Borrowed(open_msg.as_bytes());
     fc.write_frame(Frame::text(payload)).await?;
 

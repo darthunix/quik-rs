@@ -44,13 +44,11 @@ use serde_repr::*;
 #[repr(u16)]
 pub enum RequestCode {
     Auth = 10000,
-    Pin = 10001,
 }
 
-#[derive(Deserialize_repr, Debug)]
-#[repr(u16)]
-pub enum ResponceCode {
-    Auth = 20000,
-    Pin = 20001,
+pub fn auth_msg(login: &str, password: &str) -> String {
+    format!(
+        r#"{{"msgid":{:?},"login":"{}","password":"{}"}}"#,
+        RequestCode::Auth as u16, login, password
+    )
 }
-
