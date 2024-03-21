@@ -56,7 +56,7 @@ fn tls_config() -> Result<Arc<ClientConfig>> {
 fn open_msg(login: &str, password: &str) -> String {
     format!(
         r#"{{"msgid":{:?},"login":"{}","password":"{}"}}"#,
-        RequestCode::Auth, login, password
+        RequestCode::Auth as u16, login, password
     )
 }
 
